@@ -5,6 +5,7 @@ import React from 'react';
 import loading from './loading.gif';
 
 const BASE_NAME = 'Vocab list';
+// const BASE_NAME = 'Vocab list (Test data)';
 const VIEW_NAME = 'Main list';
 
 
@@ -55,8 +56,7 @@ export class FlashcardApp extends React.Component<FlashcardAppProps, FlashcardAp
         this.setState({records: records});
 
         // temp
-        // this.setState({currentQuizSet: ['recr38eQVkquZniXZ', ]});
-        this.setState({currentQuizSet: ['recQrKm8RnLR6uQ4M']});
+        this.setState({currentQuizSet: ['recr38eQVkquZniXZ', 'recQrKm8RnLR6uQ4M']});
     }
 
     startQuiz = (type: QuizType) => {
@@ -72,6 +72,7 @@ export class FlashcardApp extends React.Component<FlashcardAppProps, FlashcardAp
             <li onClick={() => this.startQuiz(QuizType.QUICK)}>Quick revision</li>
             <li onClick={() => this.startQuiz(QuizType.WORST)}>Worst words</li>
             <li onClick={() => this.startQuiz(QuizType.LEAST_RECENT)}>Least recent words</li>
+            <li onClick={() => this.startQuiz(QuizType.NEWEST)}>Newest words</li>
             </div>
         )
     }
