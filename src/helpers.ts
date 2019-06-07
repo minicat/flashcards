@@ -1,8 +1,9 @@
 export interface RecordFields {
-  // id: string, need this?
+  id: string,
   english: string,
   pinyin: string,
   chinese: string,
+  notes: string,
   category: string,
   added: Date,
   correct: number,
@@ -12,7 +13,7 @@ export interface RecordFields {
 
 export type RecordMap = {[id: string]: RecordFields};
 
-export const enum QuizType {
+export enum QuizType {
     ALL,
     QUICK,
     WORST,
@@ -31,6 +32,7 @@ export function generateQuizSet(type: QuizType, records: RecordMap): string[] {
         recordKeys.sort(() => 0.5 - Math.random());
     } else if (type === QuizType.WORST) {
         recordKeys.sort((a, b) => {
+            // TODO: fix me for division by 0
             let aCorrectRatio = records[a].correct / records[a].attempts;
             let bCorrectRatio = records[b].correct / records[b].attempts;
             // sort lowest correct ratio to the front

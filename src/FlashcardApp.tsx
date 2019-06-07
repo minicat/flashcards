@@ -8,17 +8,6 @@ const BASE_NAME = 'Vocab list';
 const VIEW_NAME = 'Main list';
 
 
-interface QuizProps {
-    records: RecordMap,
-    quizSet: string[],
-}
-
-interface QuizState {
-    index: number,
-    showInfo: boolean,
-    results: boolean[],
-}
-
 interface FlashcardAppProps {
     base: Airtable.Base;
 }
@@ -46,35 +35,43 @@ export class FlashcardApp extends React.Component<FlashcardAppProps, FlashcardAp
 
         rawRecords.forEach(rawRecord => {
             let fields: any = rawRecord.fields;
+            let id = rawRecord.id as string;
             // XXX: what's a nicer way to do this?
             let record: RecordFields = {
+                id: id,
                 english: fields["English"],
                 pinyin: fields["Pinyin"],
                 chinese: fields["Chinese"],
+                notes: fields["Notes"],
                 category: fields["Category"],
                 added: new Date(fields["Added"]),
                 correct: fields["Correct"],
                 attempts: fields["Attempts"],
                 lastTested: fields["Last Tested"] ? new Date(fields["Last Tested"]) : undefined,
             };
-            records[rawRecord.id as string] = record;
+            records[id] = record;
         })
 
         this.setState({records: records});
+
+        // temp
+        // this.setState({currentQuizSet: ['recr38eQVkquZniXZ', ]});
+        this.setState({currentQuizSet: ['recQrKm8RnLR6uQ4M']});
     }
 
-    startQuiz = (quizSet: string[]) => {
-        this.setState({currentQuizSet: quizSet});
+    startQuiz = (type: QuizType) => {
+        this.setState({currentQuizSet: generateQuizSet(type, this.state.records!)});
     }
 
     renderQuizStartOptions = () => {
         // TODO: better styling
+        // TODO: test categories?
         return (<div className="startOptions">
             <h3>What would you like to test?</h3>
-            <li onClick={() => this.startQuiz(Object.keys(this.state.records!))}>All words</li>
-            <li>Quick revision</li>
-            <li>Worst words</li>
-            <li>Least recent words</li>
+            <li onClick={() => this.startQuiz(QuizType.ALL)}>All words</li>
+            <li onClick={() => this.startQuiz(QuizType.QUICK)}>Quick revision</li>
+            <li onClick={() => this.startQuiz(QuizType.WORST)}>Worst words</li>
+            <li onClick={() => this.startQuiz(QuizType.LEAST_RECENT)}>Least recent words</li>
             </div>
         )
     }
@@ -92,6 +89,24 @@ export class FlashcardApp extends React.Component<FlashcardAppProps, FlashcardAp
     }
 }
 
+interface QuizItem {
+    id: string,
+    // true -> showing english on flashcard. false -> showing chinese
+    testingEnglish: boolean,
+}
+
+interface QuizProps {
+    records: RecordMap,
+    quizSet: string[],
+}
+
+interface QuizState {
+    index: number,
+    showInfo: boolean,
+    quizItems: QuizItem[];
+    results: boolean[],
+}
+
 class Quiz extends React.Component<QuizProps, QuizState> {
     constructor(props: QuizProps) {
         super(props);
@@ -99,9 +114,51 @@ class Quiz extends React.Component<QuizProps, QuizState> {
             index: 0,
             showInfo: false,
             results: [],
+            // TODO: improve this. we may want to test both ways on each item
+            quizItems: props.quizSet.map(id => {return {
+                id: id, testingEnglish: Math.random() >= 0.5
+            }}).sort(() => 0.5 - Math.random())
         }
     }
+
+    renderOptions() {
+        const detailText = (
+            this.state.showInfo ?
+            <div><span>▴</span> Hide details</div> :
+            <div><span>▾</span> Show details</div>
+        );
+        return <div className="options">
+                <div className="optionDetail option">{detailText}</div>
+                <div className="optionCorrect option"><span>✓</span> Correct</div>
+                <div className="optionIncorrect option"><span>✕</span> Incorrect</div>
+        </div>
+    }
+
     render() {
-        return <div> TODO: quiz </div>
+        if (this.state.index === this.state.quizItems.length) {
+            // TODO: render nice results, way to go back, etc
+            return <div>Done!</div>
+        }
+        const currItem = this.state.quizItems[this.state.index];
+        const currRecord = this.props.records[currItem.id]
+        const mainLine = currItem.testingEnglish ? currRecord.english : currRecord.pinyin;
+        const secondLine = currItem.testingEnglish ? currRecord.pinyin : currRecord.english;
+        return (
+            <div className="quiz">
+                <div className="progress">
+                    {`${this.state.index + 1} / ${this.props.quizSet.length}`}
+                </div>
+                <div className="flashcard">
+                    {mainLine}
+                </div>
+                {this.renderOptions()}
+                {this.state.showInfo && (
+                    <div className="info">
+                        {secondLine} / {currRecord.chinese}<br />
+                        {currRecord.notes}
+                    </div>
+                )}
+            </div>
+        )
     }
 }

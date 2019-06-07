@@ -1,15 +1,68 @@
 .main {
-  margin: auto;
-  width: 600px;
-  margin-top: 100px;
-  text-align: center;
+    margin: auto;
+    width: 460px;
+    margin-top: 100px;
+    text-align: center;
 }
 
 .startOptions {
     text-align:left;
 }
 
-.startOptions a, .startOptions a:visited {
+.startOptions li {
     color: #4286f4;
 }
+.startOptions li:hover {
+    color: #87a7db;
+}
 /*body {background-color: #e8e8e8; }*/
+
+.quiz {
+    margin: auto;
+}
+
+.flashcard {
+    border: 1px solid #cfcfcf;
+    border-radius: 5px;
+    background-color: #f6f6f6;
+    width: 400px;
+    font-size: 40px;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 20px;
+}
+
+.info {
+    /* preserve newlines in info */
+    text-align: left;
+    white-space: pre-line;
+    padding-left: 30px;
+    color: #6b6b6b;
+    padding-top:10px;
+}
+
+.options {
+    display: flex;
+    justify-content: space-evenly;
+    padding-left: 50px;
+    padding-right: 50px;
+}
+
+.option {
+    padding: 3px;
+    border-radius: 3px;
+}
+.option:hover {
+    background-color: #f6f6f6;
+}
+
+.optionDetail span {
+    color: #4286f4;
+}
+.optionCorrect span {
+    color: #4cba4c;
+}
+.optionIncorrect span {
+    color: #ba554c;
+}
