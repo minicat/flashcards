@@ -5,6 +5,11 @@
   text-align: center;
 }
 
-body {
-  background-color: #e8e8e8;
+.startOptions {
+    text-align:left;
 }
+
+.startOptions a, .startOptions a:visited {
+    color: #4286f4;
+}
+/*body {background-color: #e8e8e8; }*/

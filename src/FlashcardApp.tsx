@@ -1,6 +1,7 @@
 import Airtable from 'airtable';
-import React from 'react';
 import './flashcards.css';
+import React from 'react';
+import loading from './loading.gif';
 
 const BASE_NAME = 'Vocab list';
 const VIEW_NAME = 'Main list';
@@ -19,13 +20,24 @@ interface RecordFields {
 
 type RecordMap = {[id: string]: RecordFields};
 
+interface QuizProps {
+  records: RecordMap,
+  quizSet: string[],
+}
+
+interface QuizState {
+  index: number,
+  showInfo: boolean,
+  results: boolean[],
+}
+
 interface FlashcardAppProps {
   base: Airtable.Base;
 }
 
 interface FlashcardAppState {
   records?: RecordMap,
-  currentTestSet?: string[],
+  currentQuizSet?: string[],
 }
 
 export class FlashcardApp extends React.Component<FlashcardAppProps, FlashcardAppState> {
@@ -63,11 +75,45 @@ export class FlashcardApp extends React.Component<FlashcardAppProps, FlashcardAp
     this.setState({records: records});
   }
 
-  render() {
-    return (
-      <div className="main">
-       hello
+  startQuiz = (quizSet: string[]) => {
+    this.setState({currentQuizSet: quizSet});
+  }
+
+  renderQuizStartOptions = () => {
+    // TODO: better styling
+    return (<div className="startOptions">
+      <h3>What would you like to test?</h3>
+      <li onClick={() => this.startQuiz(Object.keys(this.state.records!))}>All words</li>
+      <li>Quick revision</li>
+      <li>Worst words</li>
+      <li>Least recent words</li>
       </div>
     )
+  }
+
+  render() {
+    let contents = <img src={loading} alt='Loading...' />
+    if (this.state.records) {
+      if (this.state.currentQuizSet) {
+        contents = <Quiz records={this.state.records} quizSet={this.state.currentQuizSet} />;
+      } else {
+        contents = this.renderQuizStartOptions();
+      }
+    }
+    return <div className='main'> {contents} </div>;
+  }
+}
+
+class Quiz extends React.Component<QuizProps, QuizState> {
+  constructor(props: QuizProps) {
+    super(props);
+    this.state = {
+      index: 0,
+      showInfo: false,
+      results: [],
+    }
+  }
+  render() {
+    return <div> TODO: quiz </div>
   }
 }
