@@ -5,6 +5,9 @@
     text-align: center;
 }
 
+/*
+ * Splash page UI
+ */
 .startOptions {
     text-align:left;
 }
@@ -15,8 +18,10 @@
 .startOptions li:hover {
     color: #87a7db;
 }
-/*body {background-color: #e8e8e8; }*/
 
+/*
+ * Quiz UI
+ */
 .quiz {
     margin: auto;
 }
@@ -37,16 +42,15 @@
     /* preserve newlines in info */
     text-align: left;
     white-space: pre-line;
-    padding-left: 30px;
     color: #6b6b6b;
-    padding-top:10px;
+    padding: 10px 70px 0px 70px;
 }
 
 .options {
     display: flex;
     justify-content: space-evenly;
-    padding-left: 50px;
-    padding-right: 50px;
+    padding-left: 40px;
+    padding-right: 40px;
 }
 
 .option {
@@ -57,7 +61,10 @@
     background-color: #f6f6f6;
 }
 
-.optionDetail span {
+.optionDetail {
+    width: 105px;
+}
+.optionDetail span, .optionReturn span {
     color: #4286f4;
 }
 .optionCorrect span {
@@ -65,4 +72,41 @@
 }
 .optionIncorrect span {
     color: #ba554c;
+}
+
+/*
+ * End of quiz scoring screen
+ */
+.doneTopBar {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.score {
+    font-style: italic;
+}
+
+.results {
+    /*display: flex;*/
+    text-align: left;
+    width: 460px;
+    margin-top: 10px;
+}
+.resultRow {
+    display: flex;
+    padding: 2px;
+}
+.resultRow:hover {
+    background-color: #f9f9f9;
+}
+
+.resultSymbol {
+    width: 50px;
+}
+.resultCell {
+    width: 175px;
+}
+/* should really just be a table maybe, lol */
+.resultChinese {
+    width: 100px;
 }

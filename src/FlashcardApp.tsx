@@ -2,7 +2,8 @@ import Airtable from 'airtable';
 import {generateQuizSet, RecordFields, RecordMap, QuizType} from './helpers';
 import './flashcards.css';
 import React from 'react';
-import loading from './loading.gif';
+import loading_gif from './loading.gif';
+import done_gif from './done.gif';
 
 const BASE_NAME = 'Vocab list';
 // const BASE_NAME = 'Vocab list (Test data)';
@@ -77,11 +78,22 @@ export class FlashcardApp extends React.Component<FlashcardAppProps, FlashcardAp
         )
     }
 
+    completeQuiz = () => {
+        // On completing a quiz, clear state and fetch records again to get updated stats
+        // Note: We could theoretically just update the stats ourselves, but I think this is cleaner
+        this.setState({records: undefined, currentQuizSet: undefined});
+        this.fetchRecords();
+    }
+
     render() {
-        let contents = <img src={loading} alt='Loading...' />
+        let contents = <img src={loading_gif} alt='Loading...' />
         if (this.state.records) {
             if (this.state.currentQuizSet) {
-                contents = <Quiz records={this.state.records} quizSet={this.state.currentQuizSet} />;
+                contents = <Quiz
+                    records={this.state.records}
+                    quizSet={this.state.currentQuizSet}
+                    completeQuiz={this.completeQuiz}
+                />;
             } else {
                 contents = this.renderQuizStartOptions();
             }
@@ -99,6 +111,8 @@ interface QuizItem {
 interface QuizProps {
     records: RecordMap,
     quizSet: string[],
+    // Callback to let the parent component know the quiz is done.
+    completeQuiz: () => void,
 }
 
 interface QuizState {
@@ -122,6 +136,19 @@ class Quiz extends React.Component<QuizProps, QuizState> {
         }
     }
 
+    toggleInfo = () => {
+        this.setState({showInfo: !this.state.showInfo});
+    }
+
+    grade = (isCorrect: boolean) => {
+        // TODO: API call to update stats
+        this.setState({
+            index: this.state.index + 1,
+            showInfo: false,
+            results: this.state.results.concat(isCorrect),
+        })
+    }
+
     renderOptions() {
         const detailText = (
             this.state.showInfo ?
@@ -129,16 +156,39 @@ class Quiz extends React.Component<QuizProps, QuizState> {
             <div><span>▾</span> Show details</div>
         );
         return <div className="options">
-                <div className="optionDetail option">{detailText}</div>
-                <div className="optionCorrect option"><span>✓</span> Correct</div>
-                <div className="optionIncorrect option"><span>✕</span> Incorrect</div>
+                <div className="optionDetail option" onClick={this.toggleInfo}>{detailText}</div>
+                <div className="optionCorrect option" onClick={() => {this.grade(true)}}><span>✓</span> Correct</div>
+                <div className="optionIncorrect option" onClick={() => {this.grade(false)}}><span>✕</span> Incorrect</div>
         </div>
+    }
+
+    renderDone() {
+        const correctSymbol = <div className="resultSymbol optionCorrect"><span>✓</span></div>
+        const incorrectSymbol = <div className="resultSymbol optionIncorrect"><span>✕</span></div>
+
+        return (
+            <div>
+                <div className="doneTopBar"><div className="optionReturn option" onClick={this.props.completeQuiz}><span>◂</span> Back</div></div>
+                <img src={done_gif} alt='Complete!' />
+                <div className="score">{`${this.state.results.filter(r => r === true).length} / ${this.props.quizSet.length} correct`}</div>
+                <div className="results">{this.state.quizItems.map((item, i) => {
+                    const record = this.props.records[item.id]
+                    return (
+                        <div className="resultRow" key={i}>
+                            {this.state.results[i] ? correctSymbol : incorrectSymbol}
+                            <div className="resultCell">{record.english}</div>
+                            <div className="resultCell">{record.pinyin}</div>
+                            <div className="resultChinese">{record.chinese}</div>
+                        </div>
+                    )
+                })}</div>
+             </div>
+        )
     }
 
     render() {
         if (this.state.index === this.state.quizItems.length) {
-            // TODO: render nice results, way to go back, etc
-            return <div>Done!</div>
+            return this.renderDone()
         }
         const currItem = this.state.quizItems[this.state.index];
         const currRecord = this.props.records[currItem.id]
