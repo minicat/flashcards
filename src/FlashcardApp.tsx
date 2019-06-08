@@ -131,21 +131,42 @@ interface QuizProps {
 interface QuizState {
     index: number,
     showInfo: boolean,
-    quizItems: QuizItem[];
     results: boolean[],
 }
 
 class Quiz extends React.Component<QuizProps, QuizState> {
+    quizItems: QuizItem[];
+
     constructor(props: QuizProps) {
         super(props);
+        // TODO: improve this. we may want to test both ways on each item
+        this.quizItems = _.shuffle(props.quizSet.map(id => {
+            return {id: id, testingEnglish: Math.random() >= 0.5}
+        }));
         this.state = {
             index: 0,
             showInfo: false,
             results: [],
-            // TODO: improve this. we may want to test both ways on each item
-            quizItems: _.shuffle(props.quizSet.map(id => {return {
-                id: id, testingEnglish: Math.random() >= 0.5
-            }})),
+        }
+    }
+
+    componentDidMount() {
+        document.addEventListener("keydown", this.onKeydown);
+    }
+    componentWillUnmount() {
+        document.removeEventListener("keydown", this.onKeydown);
+    }
+
+    onKeydown = (e: KeyboardEvent) => {
+        if (e.keyCode === 49 || e.keyCode === 74) {
+            // 1, J
+            this.toggleInfo();
+        } else if (e.keyCode === 50 || e.keyCode === 75) {
+            // 2, K
+            this.grade(true);
+        } else if (e.keyCode === 51 || e.keyCode === 76) {
+            // 3, L
+            this.grade(false);
         }
     }
 
@@ -154,7 +175,7 @@ class Quiz extends React.Component<QuizProps, QuizState> {
     }
 
     grade = (isCorrect: boolean) => {
-        this.props.updateRecord(this.state.quizItems[this.state.index].id, isCorrect);
+        this.props.updateRecord(this.quizItems[this.state.index].id, isCorrect);
         this.setState({
             index: this.state.index + 1,
             showInfo: false,
@@ -184,7 +205,7 @@ class Quiz extends React.Component<QuizProps, QuizState> {
                 <div className="doneTopBar"><div className="optionReturn option" onClick={this.props.completeQuiz}><span>◂</span> Back</div></div>
                 <img src={done_gif} alt='Complete!' />
                 <div className="score">{`${this.state.results.filter(r => r === true).length} / ${this.props.quizSet.length} correct`}</div>
-                <div className="results">{this.state.quizItems.map((item, i) => {
+                <div className="results">{this.quizItems.map((item, i) => {
                     const record = this.props.records[item.id]
                     return (
                         <div className="resultRow" key={i}>
@@ -200,10 +221,10 @@ class Quiz extends React.Component<QuizProps, QuizState> {
     }
 
     render() {
-        if (this.state.index === this.state.quizItems.length) {
+        if (this.state.index === this.quizItems.length) {
             return this.renderDone()
         }
-        const currItem = this.state.quizItems[this.state.index];
+        const currItem = this.quizItems[this.state.index];
         const currRecord = this.props.records[currItem.id]
         const mainLine = currItem.testingEnglish ? currRecord.english : currRecord.pinyin;
         const secondLine = currItem.testingEnglish ? currRecord.pinyin : currRecord.english;
