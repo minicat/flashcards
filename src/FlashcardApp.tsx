@@ -1,7 +1,9 @@
 import Airtable from 'airtable';
 import {generateQuizSet, RecordFields, RecordMap, QuizType} from './helpers';
 import './flashcards.css';
+import * as _ from "lodash";
 import React from 'react';
+
 import loading_gif from './loading.gif';
 import done_gif from './done.gif';
 
@@ -141,9 +143,9 @@ class Quiz extends React.Component<QuizProps, QuizState> {
             showInfo: false,
             results: [],
             // TODO: improve this. we may want to test both ways on each item
-            quizItems: props.quizSet.map(id => {return {
+            quizItems: _.shuffle(props.quizSet.map(id => {return {
                 id: id, testingEnglish: Math.random() >= 0.5
-            }}).sort(() => 0.5 - Math.random())
+            }})),
         }
     }
 

@@ -1,3 +1,5 @@
+import * as _ from "lodash";
+
 export interface RecordFields {
   id: string,
   english: string,
@@ -25,12 +27,11 @@ export enum QuizType {
 const DEFAULT_QUIZ_SIZE = 20;
 
 export function generateQuizSet(type: QuizType, records: RecordMap): string[] {
-    let recordKeys = Object.keys(records);
+    // Always shuffle to introduce randomness within the tied cases
+    // Note: QuizType.QUICK has no extra handling apart from this initial shuffle
+    let recordKeys = _.shuffle(Object.keys(records));
     if (type === QuizType.ALL) {
         return recordKeys;
-    } else if (type === QuizType.QUICK) {
-        // powered by stackoverflow
-        recordKeys.sort(() => 0.5 - Math.random());
     } else if (type === QuizType.WORST) {
         // TODO: Should untested words be treated as 100% correct instead of 100% wrong?
         const ratio = (record: RecordFields) => {
@@ -54,8 +55,7 @@ export function generateQuizSet(type: QuizType, records: RecordMap): string[] {
             // sort highest time ago to the front
             return howLongAgo(records[b], currentTime) - howLongAgo(records[a], currentTime);
         })
-    } else {
-        // QuizType.NEWEST
+    } else if (type === QuizType.NEWEST) {
         recordKeys.sort((a, b) => {
             // sort highest time to the front (newest)
             return records[b].added.getTime() - records[a].added.getTime();
