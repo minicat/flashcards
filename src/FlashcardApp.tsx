@@ -5,8 +5,8 @@ import React from 'react';
 import loading_gif from './loading.gif';
 import done_gif from './done.gif';
 
-const BASE_NAME = 'Vocab list';
-// const BASE_NAME = 'Vocab list (Test data)';
+const TABLE_NAME = 'Vocab list';
+// const TABLE_NAME = 'Vocab list (Test data)';
 const VIEW_NAME = 'Main list';
 
 
@@ -29,7 +29,7 @@ export class FlashcardApp extends React.Component<FlashcardAppProps, FlashcardAp
 
     fetchRecords = async () => {
         // TODO: can move this into a helper
-        let rawRecords = await this.props.base(BASE_NAME).select({
+        let rawRecords = await this.props.base(TABLE_NAME).select({
             view: VIEW_NAME
         }).all();
 
@@ -58,6 +58,17 @@ export class FlashcardApp extends React.Component<FlashcardAppProps, FlashcardAp
 
         // temp
         this.setState({currentQuizSet: ['recr38eQVkquZniXZ', 'recQrKm8RnLR6uQ4M']});
+    }
+
+    updateRecord = (id: string, isCorrect: boolean) => {
+        const record = this.state.records![id];
+        const currDate = new Date();
+        // @ts-ignore: airtable typescript definitions don't have this yet
+        this.props.base(TABLE_NAME).update(id, {
+            "Correct": record.correct + (isCorrect ? 1 : 0),
+            "Attempts": record.attempts + 1,
+            "Last Tested": `${currDate.getMonth()}/${currDate.getDate()}/${currDate.getUTCFullYear()}`,
+        });
     }
 
     startQuiz = (type: QuizType) => {
@@ -93,6 +104,7 @@ export class FlashcardApp extends React.Component<FlashcardAppProps, FlashcardAp
                     records={this.state.records}
                     quizSet={this.state.currentQuizSet}
                     completeQuiz={this.completeQuiz}
+                    updateRecord={this.updateRecord}
                 />;
             } else {
                 contents = this.renderQuizStartOptions();
@@ -113,6 +125,8 @@ interface QuizProps {
     quizSet: string[],
     // Callback to let the parent component know the quiz is done.
     completeQuiz: () => void,
+    // Callback that updates the correct/attempts info of a record
+    updateRecord: (id: string, isCorrect: boolean) => void,
 }
 
 interface QuizState {
@@ -141,7 +155,7 @@ class Quiz extends React.Component<QuizProps, QuizState> {
     }
 
     grade = (isCorrect: boolean) => {
-        // TODO: API call to update stats
+        this.props.updateRecord(this.state.quizItems[this.state.index].id, isCorrect);
         this.setState({
             index: this.state.index + 1,
             showInfo: false,
