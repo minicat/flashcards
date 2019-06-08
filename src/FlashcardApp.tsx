@@ -75,15 +75,14 @@ export class FlashcardApp extends React.Component<FlashcardAppProps, FlashcardAp
     }
 
     renderQuizStartOptions = () => {
-        // TODO: better styling
         // TODO: test categories?
         return (<div className="startOptions">
             <h3>What would you like to test?</h3>
-            <li onClick={() => this.startQuiz(QuizType.ALL)}>All words</li>
-            <li onClick={() => this.startQuiz(QuizType.QUICK)}>Quick revision</li>
-            <li onClick={() => this.startQuiz(QuizType.WORST)}>Worst words</li>
-            <li onClick={() => this.startQuiz(QuizType.LEAST_RECENT)}>Least recent words</li>
-            <li onClick={() => this.startQuiz(QuizType.NEWEST)}>Newest words</li>
+            <div onClick={() => this.startQuiz(QuizType.ALL)}>All words</div>
+            <div onClick={() => this.startQuiz(QuizType.QUICK)}>Quick revision</div>
+            <div onClick={() => this.startQuiz(QuizType.WORST)}>Worst words</div>
+            <div onClick={() => this.startQuiz(QuizType.LEAST_RECENT)}>Least recently tested words</div>
+            <div onClick={() => this.startQuiz(QuizType.NEWEST)}>Newest words</div>
             </div>
         )
     }

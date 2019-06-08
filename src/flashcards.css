@@ -10,13 +10,24 @@
  */
 .startOptions {
     text-align:left;
+    display: flex;
+    flex-wrap: wrap;
 }
 
-.startOptions li {
-    color: #4286f4;
+.startOptions h3 {
+    width: 100%;
+    margin-bottom: 7px;
 }
-.startOptions li:hover {
-    color: #87a7db;
+.startOptions div{
+    color: #6b6b6b;
+    border-radius: 3px;
+    border: 1px solid #cfcfcf;
+    padding: 6px;
+    /*width: 150px;*/
+    margin: 3px;
+}
+.startOptions div:hover {
+    background-color: #f9f9f9;
 }
 
 /*
