@@ -55,9 +55,6 @@ export class FlashcardApp extends React.Component<FlashcardAppProps, FlashcardAp
         })
 
         this.setState({records: records});
-
-        // temp
-        this.setState({currentQuizSet: ['recr38eQVkquZniXZ', 'recQrKm8RnLR6uQ4M']});
     }
 
     updateRecord = (id: string, isCorrect: boolean) => {
