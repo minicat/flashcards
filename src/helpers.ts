@@ -20,7 +20,8 @@ export enum QuizType {
     QUICK,
     WORST,
     LEAST_RECENT,
-    NEWEST
+    NEWEST,
+    LEAST_TESTED
 }
 
 // For all types except ALL, how many records to test
@@ -59,6 +60,10 @@ export function generateQuizSet(type: QuizType, records: RecordMap): string[] {
         recordKeys.sort((a, b) => {
             // sort highest time to the front (newest)
             return records[b].added.getTime() - records[a].added.getTime();
+        })
+    } else if (type === QuizType.LEAST_TESTED) {
+        recordKeys.sort((a, b) => {
+            return records[a].attempts - records[b].attempts;
         })
     }
     return recordKeys.slice(0, DEFAULT_QUIZ_SIZE);

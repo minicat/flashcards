@@ -83,6 +83,7 @@ export class FlashcardApp extends React.Component<FlashcardAppProps, FlashcardAp
             <div onClick={() => this.startQuiz(QuizType.WORST)}>Worst words</div>
             <div onClick={() => this.startQuiz(QuizType.LEAST_RECENT)}>Least recently tested words</div>
             <div onClick={() => this.startQuiz(QuizType.NEWEST)}>Newest words</div>
+            <div onClick={() => this.startQuiz(QuizType.LEAST_TESTED)}>Least tested words</div>
             </div>
         )
     }
