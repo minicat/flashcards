@@ -9,7 +9,7 @@
     "@types/react": "^16.8.19",
     "@types/react-dom": "^16.8.4",
     "airtable": "^0.6.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-scripts": "3.0.1",
