@@ -8,9 +8,12 @@
     "build:live": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts"
   },
   "dependencies": {
+    "airtable": "^0.7.1",
+    "body-parser": "^1.19.0",
     "express": "^4.17.1"
   },
   "devDependencies": {
+    "@types/airtable": "^0.5.6",
     "@types/express": "^4.17.1",
     "@types/node": "^12.7.4",
     "nodemon": "^1.19.2",
