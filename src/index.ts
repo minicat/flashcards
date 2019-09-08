@@ -15,6 +15,7 @@ async function main(): Promise<void> {
     const base: Airtable.Base = new Airtable({apiKey: process.env.AIRTABLE_API_KEY}).base(BASE_ID);
 
     app.use(bodyParser.urlencoded());
+    app.use(bodyParser.json());
 
     app.get('/api/hello', async (req: Request, res: Response) => {
         res.send('hello world!');
@@ -33,13 +34,13 @@ async function main(): Promise<void> {
 
     app.post('/api/log_attempt', async (req: Request, res: Response) => {
         // return value of find is incorrectly typed as an array of records: workaround
-        const record = await base(TABLE_NAME).find(req.body.recordId) as any;
+        const record = await base(TABLE_NAME).find(req.body.id) as any;
         const currDate = new Date();
 
         await base(TABLE_NAME).update(
-            req.body.recordId,
+            req.body.id,
             {
-                "Correct": record.fields["Correct"] + (req.body.isCorrect === 'true' ? 1 : 0),
+                "Correct": record.fields["Correct"] + (req.body.isCorrect ? 1 : 0),
                 "Attempts": record.fields["Attempts"] + 1,
                 "Last Tested": `${currDate.getMonth()}/${currDate.getDate()}/${currDate.getUTCFullYear()}`,
             }

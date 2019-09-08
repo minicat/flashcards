@@ -1,4 +1,3 @@
-import Airtable from 'airtable';
 import {generateQuizSet, RecordFields, RecordMap, QuizType} from './helpers';
 import './flashcards.css';
 import * as _ from "lodash";
@@ -7,22 +6,13 @@ import React from 'react';
 import loading_gif from './loading.gif';
 import done_gif from './done.gif';
 
-const TABLE_NAME = 'Vocab list';
-// const TABLE_NAME = 'Vocab list (Test data)';
-const VIEW_NAME = 'Main list';
-
-
-interface FlashcardAppProps {
-    base: Airtable.Base;
-}
-
 interface FlashcardAppState {
     records?: RecordMap,
     currentQuizSet?: string[],
 }
 
-export class FlashcardApp extends React.Component<FlashcardAppProps, FlashcardAppState> {
-    constructor(props: FlashcardAppProps) {
+export class FlashcardApp extends React.Component<{}, FlashcardAppState> {
+    constructor(props: {}) {
         super(props);
         this.fetchRecords();
 
@@ -31,17 +21,16 @@ export class FlashcardApp extends React.Component<FlashcardAppProps, FlashcardAp
 
     fetchRecords = async () => {
         // TODO: can move this into a helper
-        let rawRecords = await this.props.base(TABLE_NAME).select({
-            view: VIEW_NAME
-        }).all();
+        const rawRecords = await fetch('/api/list');
+        const rawRecordsList: Array<{id: string, fields: any}> = await rawRecords.json();
 
-        let records: RecordMap = {};
+        const records: RecordMap = {};
 
-        rawRecords.forEach(rawRecord => {
-            let fields: any = rawRecord.fields;
-            let id = rawRecord.id as string;
+        rawRecordsList.forEach(rawRecord => {
+            const fields: any = rawRecord.fields;
+            const id = rawRecord.id;
             // XXX: what's a nicer way to do this?
-            let record: RecordFields = {
+            const record: RecordFields = {
                 id: id,
                 english: fields["English"],
                 pinyin: fields["Pinyin"],
@@ -60,14 +49,16 @@ export class FlashcardApp extends React.Component<FlashcardAppProps, FlashcardAp
     }
 
     updateRecord = (id: string, isCorrect: boolean) => {
-        const record = this.state.records![id];
-        const currDate = new Date();
-        // @ts-ignore: airtable typescript definitions don't have this yet
-        this.props.base(TABLE_NAME).update(id, {
-            "Correct": record.correct + (isCorrect ? 1 : 0),
-            "Attempts": record.attempts + 1,
-            "Last Tested": `${currDate.getMonth()}/${currDate.getDate()}/${currDate.getUTCFullYear()}`,
-        });
+        fetch('/api/log_attempt', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id,
+                isCorrect,
+            }),
+        })
     }
 
     startQuiz = (type: QuizType) => {
