@@ -17,6 +17,11 @@ async function main(): Promise<void> {
     app.use(bodyParser.urlencoded());
     app.use(bodyParser.json());
 
+
+    if (process.env.NODE_ENV === 'production') {
+        app.use(express.static('../client/build'));
+    }
+
     app.get('/api/hello', async (req: Request, res: Response) => {
         res.send('hello world!');
     })
