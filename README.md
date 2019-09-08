@@ -1,7 +1,7 @@
 # flashcards
 Simple flashcard web app for me to test Chinese vocab. Backed by Airtable!
 
-I have an Airtable base that stores each of my vocab words as a record, and this is a React app that talks to it to get all of the records, and also writes back the results for tracking.
+I have an Airtable base that stores each of my vocab words as a record. `/client` contains the frontend React app. `/src` contains an Express server that talks to Airtable to query and update records (and serves the client).
 
 ## Screenshots
 ![Main page](https://raw.githubusercontent.com/minicat/flashcards/screenshots/screenshots/main_page.png)
@@ -10,7 +10,7 @@ I have an Airtable base that stores each of my vocab words as a record, and this
 
 ## TODOs
 - Quiz by category
-- Option to test both ways on each item during quiz
+- Option to choose test direction (English -> Chinese, Chinese -> English, both ways)
 - Track practice streaks across days
 - Display/track directional (English -> Chinese, Chinese -> English) correctness separately
-- ✨ productionise ✨ - backend that also handles the Airtable calls, so the API token isn't leaked (currently the app just calls it from the frontend)
+- Toggle to enable/disable recording stats
