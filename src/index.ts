@@ -25,7 +25,10 @@ async function main(): Promise<void> {
             view: VIEW_NAME
         }).all();
 
-       res.json(rawRecords);
+       res.json(rawRecords.map(rawRecord => ({
+           id: rawRecord.id,
+           fields: rawRecord.fields,
+       })));
     })
 
     app.post('/api/log_attempt', async (req: Request, res: Response) => {
