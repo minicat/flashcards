@@ -177,8 +177,8 @@ class Quiz extends React.Component<QuizProps, QuizState> {
     renderOptions() {
         const detailText = (
             this.state.showInfo ?
-            <div><span>▴</span> Hide details</div> :
-            <div><span>▾</span> Show details</div>
+            <><span>▴</span> Hide details</> :
+            <><span>▾</span> Show details</>
         );
         return <div className="options">
                 <div className="optionDetail option" onClick={this.toggleInfo}>{detailText}</div>

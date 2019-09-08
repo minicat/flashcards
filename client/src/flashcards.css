@@ -1,8 +1,14 @@
 .main {
     margin: auto;
-    width: 460px;
+    max-width: 460px;
     margin-top: 100px;
     text-align: center;
+}
+
+@media only screen and (max-device-width: 600px) {
+    .main {
+        margin-top: 20px;
+    }
 }
 
 /*
@@ -12,8 +18,8 @@
     text-align:left;
     display: flex;
     flex-wrap: wrap;
+    margin: auto;
 }
-
 .startOptions h3 {
     width: 100%;
     margin-bottom: 7px;
@@ -30,6 +36,19 @@
     background-color: #f9f9f9;
 }
 
+@media only screen and (max-device-width: 600px) {
+    .startOptions {
+        min-width: 280px;
+        max-width: 460px;
+        padding: 20px;
+    }
+
+    .startOptions div{
+        width: 100%;
+        padding: 8px;
+    }
+}
+
 /*
  * Quiz UI
  */
@@ -41,7 +60,8 @@
     border: 1px solid #cfcfcf;
     border-radius: 5px;
     background-color: #f6f6f6;
-    width: 400px;
+    min-width: 200px;
+    max-width: 400px;
     font-size: 40px;
     margin: auto;
     margin-top: 10px;
@@ -73,6 +93,7 @@
 }
 
 .optionDetail {
+    /* Ensure toggling text doesnt change size */
     width: 105px;
 }
 .optionDetail span, .optionReturn span {
@@ -83,6 +104,34 @@
 }
 .optionIncorrect span {
     color: #ba554c;
+}
+
+@media only screen and (max-device-width: 600px) {
+    .flashcard {
+        max-width: 250px;
+    }
+
+    .options {
+        justify-content: center;
+    }
+
+    .option {
+        /* Hide text */
+        font-size: 0;
+        width: 100px;
+    }
+
+    .option span {
+        font-size: 30px;
+    }
+
+    .optionDetail {
+        width: 100px;
+    }
+
+    .info {
+        padding: 10px 10px 0px 40px;
+    }
 }
 
 /*
@@ -100,8 +149,7 @@
 .results {
     /*display: flex;*/
     text-align: left;
-    width: 460px;
-    margin-top: 10px;
+    margin: 10px;
 }
 .resultRow {
     display: flex;
@@ -120,4 +168,10 @@
 /* should really just be a table maybe, lol */
 .resultChinese {
     width: 100px;
+}
+
+@media only screen and (max-device-width: 600px) {
+    .resultChinese {
+        display: none;
+    }
 }

@@ -14,3 +14,4 @@ I have an Airtable base that stores each of my vocab words as a record. `/client
 - Track practice streaks across days
 - Display/track directional (English -> Chinese, Chinese -> English) correctness separately
 - Toggle to enable/disable recording stats
+- Option to set quiz size
