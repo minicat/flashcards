@@ -21,7 +21,7 @@ export class FlashcardApp extends React.Component<{}, FlashcardAppState> {
 
     fetchRecords = async () => {
         // TODO: can move this into a helper
-        const rawRecords = await fetch('/api/list');
+        const rawRecords = await fetch('api/list');
         const rawRecordsList: Array<{id: string, fields: any}> = await rawRecords.json();
 
         const records: RecordMap = {};
@@ -49,7 +49,7 @@ export class FlashcardApp extends React.Component<{}, FlashcardAppState> {
     }
 
     updateRecord = (id: string, isCorrect: boolean) => {
-        fetch('/api/log_attempt', {
+        fetch('api/log_attempt', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
