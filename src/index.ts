@@ -47,8 +47,10 @@ async function main(): Promise<void> {
             {
                 "Correct": record.fields["Correct"] + (req.body.isCorrect ? 1 : 0),
                 "Attempts": record.fields["Attempts"] + 1,
-                "Last Tested": `${currDate.getMonth()}/${currDate.getDate()}/${currDate.getUTCFullYear()}`,
+                "Last Tested": currDate.toISOString().substring(0, 10),
             }
+        ).catch(
+            (reason) => console.log('update rejected: ' + reason)
         )
         res.sendStatus(200);
     })
