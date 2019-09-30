@@ -45,8 +45,8 @@ async function main(): Promise<void> {
         await base(TABLE_NAME).update(
             req.body.id,
             {
-                "Correct": record.fields["Correct"] + (req.body.isCorrect ? 1 : 0),
-                "Attempts": record.fields["Attempts"] + 1,
+                "Correct": record.fields["Correct"] || 0 + (req.body.isCorrect ? 1 : 0),
+                "Attempts": record.fields["Attempts"] || 0 + 1,
                 "Last Tested": `${currDate.getFullYear()}-${currDate.getMonth() + 1}-${currDate.getDate()}`,
             }
         ).catch(
