@@ -7,6 +7,7 @@ export interface RecordFields {
   chinese: string,
   notes: string,
   category: string,
+  sources: Array<string>,
   added: Date,
   correct: number,
   attempts: number,

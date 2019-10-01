@@ -37,6 +37,7 @@ export class FlashcardApp extends React.Component<{}, FlashcardAppState> {
                 chinese: fields["Chinese"],
                 notes: fields["Notes"],
                 category: fields["Category"],
+                sources: fields["Source(s)"],
                 added: new Date(fields["Added"]),
                 correct: fields["Correct"],
                 attempts: fields["Attempts"],
