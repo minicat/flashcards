@@ -9,6 +9,17 @@ const TABLE_NAME = 'Vocab list';
 // const TABLE_NAME = 'Vocab list (Test data)';
 const VIEW_NAME = 'Main list';
 
+// TODO: use real spaced repetition
+function getDaysUntil(prevDaysUntil: number, isCorrect: boolean) {
+    if (!isCorrect || prevDaysUntil === 0) {
+        return 1;
+    }
+    if (prevDaysUntil >= 64) {
+        return 64;
+    }
+    return prevDaysUntil * 2;
+}
+
 async function main(): Promise<void> {
     const app: Application = express();
     const port: number = +(process.env.PORT || 8002);
@@ -41,13 +52,18 @@ async function main(): Promise<void> {
         // return value of find is incorrectly typed as an array of records: workaround
         const record = await base(TABLE_NAME).find(req.body.id) as any;
         const currDate = new Date();
+        const currDateFormatted = `${currDate.getFullYear()}-${currDate.getMonth() + 1}-${currDate.getDate()}`;
+
+        const daysUntil = getDaysUntil(record.fields["Days until next test"] || 0, req.body.isCorrect);
 
         await base(TABLE_NAME).update(
             req.body.id,
             {
                 "Correct": (record.fields["Correct"] || 0) + (req.body.isCorrect ? 1 : 0),
                 "Attempts": (record.fields["Attempts"] || 0) + 1,
-                "Last Tested": `${currDate.getFullYear()}-${currDate.getMonth() + 1}-${currDate.getDate()}`,
+                "Last Tested": currDateFormatted,
+                ...(req.body.isCorrect ? {} : {"Last Incorrect": currDateFormatted}),
+                "Days until next test": daysUntil,
             }
         ).catch(
             (reason) => console.log('update rejected: ' + reason)
