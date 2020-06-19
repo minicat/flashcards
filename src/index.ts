@@ -9,6 +9,8 @@ const TABLE_NAME = 'Vocab list';
 // const TABLE_NAME = 'Vocab list (Test data)';
 const VIEW_NAME = 'Main list';
 
+const SESSIONS_TABLE_NAME = 'Testing sessions';
+
 // TODO: use real spaced repetition
 function getDaysUntil(prevDaysUntil: number, isCorrect: boolean) {
     if (!isCorrect || prevDaysUntil === 0) {
@@ -18,6 +20,11 @@ function getDaysUntil(prevDaysUntil: number, isCorrect: boolean) {
         return 64;
     }
     return prevDaysUntil * 2;
+}
+
+function getCurrDate(): string {
+    const currDate = new Date();
+    return `${currDate.getFullYear()}-${currDate.getMonth() + 1}-${currDate.getDate()}`;
 }
 
 async function main(): Promise<void> {
@@ -35,7 +42,7 @@ async function main(): Promise<void> {
 
     app.get('/api/hello', async (req: Request, res: Response) => {
         res.send('hello world!');
-    })
+    });
 
     app.get('/api/list', async (req: Request, res: Response) => {
        let rawRecords = await base(TABLE_NAME).select({
@@ -46,14 +53,12 @@ async function main(): Promise<void> {
            id: rawRecord.id,
            fields: rawRecord.fields,
        })));
-    })
+    });
 
     app.post('/api/log_attempt', async (req: Request, res: Response) => {
         // return value of find is incorrectly typed as an array of records: workaround
         const record = await base(TABLE_NAME).find(req.body.id) as any;
-        const currDate = new Date();
-        const currDateFormatted = `${currDate.getFullYear()}-${currDate.getMonth() + 1}-${currDate.getDate()}`;
-
+        const currDate = getCurrDate();
         const daysUntil = getDaysUntil(record.fields["Days until next test"] || 0, req.body.isCorrect);
 
         await base(TABLE_NAME).update(
@@ -61,15 +66,27 @@ async function main(): Promise<void> {
             {
                 "Correct": (record.fields["Correct"] || 0) + (req.body.isCorrect ? 1 : 0),
                 "Attempts": (record.fields["Attempts"] || 0) + 1,
-                "Last Tested": currDateFormatted,
-                ...(req.body.isCorrect ? {} : {"Last Incorrect": currDateFormatted}),
+                "Last Tested": currDate,
+                ...(req.body.isCorrect ? {} : {"Last Incorrect": currDate}),
                 "Days until next test": daysUntil,
             }
         ).catch(
-            (reason) => console.log('update rejected: ' + reason)
-        )
+            (reason) => console.log('log_attempt update rejected: ' + reason)
+        );
         res.sendStatus(200);
-    })
+    });
+
+    app.post('/api/log_quiz', async (req: Request, res: Response) => {
+        const currDate = getCurrDate();
+        await base(SESSIONS_TABLE_NAME).create({
+            "Date": currDate,
+            "Correct": req.body.nCorrect,
+            "Incorrect": req.body.nIncorrect,
+        }).catch(
+            (reason) => console.log('log_quiz create rejected: ' + reason)
+        );
+        res.sendStatus(200);
+    });
 
     await app.listen(port);
     console.log(`listening on port ${port}!`);

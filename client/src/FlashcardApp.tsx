@@ -59,7 +59,20 @@ export class FlashcardApp extends React.Component<{}, FlashcardAppState> {
                 isCorrect,
             }),
         })
-    }
+    };
+
+    logQuiz = (nCorrect: number, nIncorrect: number) => {
+        fetch('api/log_quiz', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                nCorrect,
+                nIncorrect,
+            }),
+        })
+    };
 
     startQuiz = (type: QuizType) => {
         this.setState({currentQuizSet: generateQuizSet(type, this.state.records!)});
@@ -95,6 +108,7 @@ export class FlashcardApp extends React.Component<{}, FlashcardAppState> {
                     quizSet={this.state.currentQuizSet}
                     completeQuiz={this.completeQuiz}
                     updateRecord={this.updateRecord}
+                    logQuiz={this.logQuiz}
                 />;
             } else {
                 contents = this.renderQuizStartOptions();

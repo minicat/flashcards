@@ -17,6 +17,9 @@ interface QuizProps {
     completeQuiz: () => void,
     // Callback that updates the correct/attempts info of a record
     updateRecord: (id: string, isCorrect: boolean) => void,
+    // Callback that logs the total correct/attempts of this quiz session
+    // Separate to completeQuiz since completeQuiz isn't always called (e.g. if you leave the page before clicking back)
+    logQuiz: (nCorrect: number, nIncorrect: number) => void,
 }
 
 interface QuizState {
@@ -67,6 +70,12 @@ export class Quiz extends React.Component<QuizProps, QuizState> {
 
     grade = (isCorrect: boolean) => {
         this.props.updateRecord(this.quizItems[this.state.index].id, isCorrect);
+        // if it was the last card, also log a session
+        if (this.state.index + 1 === this.quizItems.length) {
+            // this is a bit funky since we're doing it before the state update
+            const nCorrect = this.state.results.filter(result => result).length + (isCorrect ? 1 : 0);
+            this.props.logQuiz(nCorrect, this.quizItems.length - nCorrect);
+        }
         this.setState({
             index: this.state.index + 1,
             showInfo: false,
