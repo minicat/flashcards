@@ -38,7 +38,7 @@ export function generateQuizSet(type: QuizType, records: RecordMap): string[] {
         // TODO: Should untested words be treated as 100% correct instead of 100% wrong?
         const ratio = (record: RecordFields) => {
             return record.attempts === 0 ? 0 : record.correct / record.attempts;
-        }
+        };
         recordKeys.sort((a, b) => {
             // sort lowest correct ratio to the front
             return ratio(records[a]) - ratio(records[b]);
@@ -51,7 +51,7 @@ export function generateQuizSet(type: QuizType, records: RecordMap): string[] {
         const howLongAgo = (record: RecordFields, currentTime: number) => {
             const lastTested = record.lastTested ? record.lastTested.getTime() : 0;
             return currentTime - lastTested;
-        }
+        };
 
         recordKeys.sort((a, b) => {
             // sort highest time ago to the front

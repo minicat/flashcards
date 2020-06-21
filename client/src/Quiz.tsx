@@ -62,11 +62,11 @@ export class Quiz extends React.Component<QuizProps, QuizState> {
             // 3, L
             this.grade(false);
         }
-    }
+    };
 
     toggleInfo = () => {
         this.setState({showInfo: !this.state.showInfo});
-    }
+    };
 
     grade = (isCorrect: boolean) => {
         this.props.updateRecord(this.quizItems[this.state.index].id, isCorrect);
@@ -81,7 +81,7 @@ export class Quiz extends React.Component<QuizProps, QuizState> {
             showInfo: false,
             results: this.state.results.concat(isCorrect),
         })
-    }
+    };
 
     renderOptions() {
         const detailText = (
@@ -97,8 +97,8 @@ export class Quiz extends React.Component<QuizProps, QuizState> {
     }
 
     renderDone() {
-        const correctSymbol = <div className="resultSymbol optionCorrect"><span>✓</span></div>
-        const incorrectSymbol = <div className="resultSymbol optionIncorrect"><span>✕</span></div>
+        const correctSymbol = <div className="resultSymbol optionCorrect"><span>✓</span></div>;
+        const incorrectSymbol = <div className="resultSymbol optionIncorrect"><span>✕</span></div>;
 
         return (
             <div>
@@ -106,7 +106,7 @@ export class Quiz extends React.Component<QuizProps, QuizState> {
                 <img src={done_gif} alt='Complete!' />
                 <div className="score">{`${this.state.results.filter(r => r === true).length} / ${this.props.quizSet.length} correct`}</div>
                 <div className="results">{this.quizItems.map((item, i) => {
-                    const record = this.props.records[item.id]
+                    const record = this.props.records[item.id];
                     return (
                         <div className="resultRow" key={i}>
                             {this.state.results[i] ? correctSymbol : incorrectSymbol}
@@ -125,7 +125,7 @@ export class Quiz extends React.Component<QuizProps, QuizState> {
             return this.renderDone()
         }
         const currItem = this.quizItems[this.state.index];
-        const currRecord = this.props.records[currItem.id]
+        const currRecord = this.props.records[currItem.id];
         const mainLine = currItem.testingEnglish ? currRecord.english : currRecord.pinyin;
         const secondLine = currItem.testingEnglish ? currRecord.pinyin : currRecord.english;
         return (

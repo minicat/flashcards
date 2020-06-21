@@ -43,10 +43,10 @@ export class FlashcardApp extends React.Component<{}, FlashcardAppState> {
                 lastTested: fields["Last Tested"] ? new Date(fields["Last Tested"]) : undefined,
             };
             records[id] = record;
-        })
+        });
 
         this.setState({records: records});
-    }
+    };
 
     updateRecord = (id: string, isCorrect: boolean) => {
         fetch('api/log_attempt', {
@@ -76,7 +76,7 @@ export class FlashcardApp extends React.Component<{}, FlashcardAppState> {
 
     startQuiz = (type: QuizType) => {
         this.setState({currentQuizSet: generateQuizSet(type, this.state.records!)});
-    }
+    };
 
     renderQuizStartOptions = () => {
         // TODO: test categories?
@@ -90,14 +90,14 @@ export class FlashcardApp extends React.Component<{}, FlashcardAppState> {
             <div onClick={() => this.startQuiz(QuizType.LEAST_TESTED)}>Least tested words</div>
             </div>
         )
-    }
+    };
 
     completeQuiz = () => {
         // On completing a quiz, clear state and fetch records again to get updated stats
         // Note: We could theoretically just update the stats ourselves, but I think this is cleaner
         this.setState({records: undefined, currentQuizSet: undefined});
         this.fetchRecords();
-    }
+    };
 
     render() {
         let contents = <img src={loading_gif} alt='Loading...' />
