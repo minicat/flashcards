@@ -41,6 +41,10 @@ export class FlashcardApp extends React.Component<{}, FlashcardAppState> {
                 correct: fields["Correct"],
                 attempts: fields["Attempts"],
                 lastTested: fields["Last Tested"] ? new Date(fields["Last Tested"]) : undefined,
+                daysUntilNextTest: fields["Days until next test"],
+                // Only defined if Last Tested is defined, otherwise is #ERROR
+                nextTestDate: fields["Last Tested"] ? new Date(fields["Next test date"]) : undefined,
+                lastIncorrect: fields["Last Incorrect"] ? new Date(fields["Last Incorrect"]) : undefined,
             };
             records[id] = record;
         });
@@ -88,6 +92,8 @@ export class FlashcardApp extends React.Component<{}, FlashcardAppState> {
             <div onClick={() => this.startQuiz(QuizType.LEAST_RECENT)}>Least recently tested words</div>
             <div onClick={() => this.startQuiz(QuizType.NEWEST)}>Newest words</div>
             <div onClick={() => this.startQuiz(QuizType.LEAST_TESTED)}>Least tested words</div>
+            <div onClick={() => this.startQuiz(QuizType.UNLEARNED)}>Unlearned words</div>
+            <div onClick={() => this.startQuiz(QuizType.REVISION)}>Due for revision</div>
             </div>
         )
     };

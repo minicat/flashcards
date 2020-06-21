@@ -1,17 +1,20 @@
 import * as _ from "lodash";
 
 export interface RecordFields {
-  id: string,
-  english: string,
-  pinyin: string,
-  chinese: string,
-  notes: string,
-  category: string,
-  sources: Array<string>,
-  added: Date,
-  correct: number,
-  attempts: number,
-  lastTested?: Date,
+    id: string,
+    english: string,
+    pinyin: string,
+    chinese: string,
+    notes: string,
+    category: string,
+    sources: Array<string>,
+    added: Date,
+    correct: number,
+    attempts: number,
+    lastTested?: Date,
+    daysUntilNextTest: number,
+    nextTestDate?: Date,
+    lastIncorrect?: Date,
 }
 
 export type RecordMap = {[id: string]: RecordFields};
@@ -22,7 +25,9 @@ export enum QuizType {
     WORST,
     LEAST_RECENT,
     NEWEST,
-    LEAST_TESTED
+    LEAST_TESTED,
+    UNLEARNED,
+    REVISION,
 }
 
 // For all types except ALL, how many records to test
@@ -66,6 +71,23 @@ export function generateQuizSet(type: QuizType, records: RecordMap): string[] {
         recordKeys.sort((a, b) => {
             return records[a].attempts - records[b].attempts;
         })
+    } else if (type === QuizType.UNLEARNED) {
+        // TODO: technically unlearned/revision could yield 0 words, add a fallback
+        // Heuristic: "learned" words have a minimum number of corrects and a minimum correctness percentage.
+        // However, decrease the correctness percentage required at higher amounts otherwise some words will never be learned.
+        // TODO: improve this heuristic in the future
+        recordKeys = recordKeys.filter(recordKey => {
+            const record = records[recordKey];
+            const ratio = record.correct / record.attempts;
+            return (record.correct < 10 || ratio < 0.75) || (record.correct > 15 && ratio > 0.6);
+        });
+    } else if (type === QuizType.REVISION) {
+        // Words due for revision as per nextTestDate
+        recordKeys = recordKeys.filter(recordKey => {
+            const record = records[recordKey];
+            // Treat untested words (no nextTestDate) as due.
+            return record.nextTestDate === undefined || record.nextTestDate <= new Date();
+        });
     }
     return recordKeys.slice(0, DEFAULT_QUIZ_SIZE);
 }
