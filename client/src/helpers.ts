@@ -79,7 +79,7 @@ export function generateQuizSet(type: QuizType, records: RecordMap): string[] {
         recordKeys = recordKeys.filter(recordKey => {
             const record = records[recordKey];
             const ratio = record.correct / record.attempts;
-            return (record.correct < 10 || ratio < 0.75) || (record.correct > 15 && ratio > 0.6);
+            return record.correct < 10 || ratio < 0.75 || (record.correct > 15 && ratio < 0.6);
         });
     } else if (type === QuizType.REVISION) {
         // Words due for revision as per nextTestDate
