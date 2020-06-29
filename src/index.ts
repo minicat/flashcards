@@ -12,10 +12,19 @@ const VIEW_NAME = 'Main list';
 const SESSIONS_TABLE_NAME = 'Testing sessions';
 
 // TODO: use real spaced repetition
-function getDaysUntil(prevDaysUntil: number, isCorrect: boolean) {
+// nextTestDateString is {error: '#ERROR'} when word has not been tested before
+function getDaysUntil(prevDaysUntil: number, isCorrect: boolean, nextTestDateString: string | object) {
     if (!isCorrect || prevDaysUntil === 0) {
         return 1;
     }
+
+    // if we haven't passed the next due test date, don't increment the counter
+    // Otherwise if we get it right earlier, we won't get the repeat at the right time.
+    // (But we don't do this for incorrect, since we need the extra practice earlier in that case)
+    if (typeof nextTestDateString === 'string' && nextTestDateString > getCurrDate()) {
+        return prevDaysUntil;
+    }
+
     if (prevDaysUntil >= 64) {
         return 64;
     }
@@ -24,7 +33,7 @@ function getDaysUntil(prevDaysUntil: number, isCorrect: boolean) {
 
 function getCurrDate(): string {
     const currDate = new Date();
-    return `${currDate.getFullYear()}-${currDate.getMonth() + 1}-${currDate.getDate()}`;
+    return currDate.toISOString().substr(0, 10);
 }
 
 async function main(): Promise<void> {
@@ -59,7 +68,7 @@ async function main(): Promise<void> {
         // return value of find is incorrectly typed as an array of records: workaround
         const record = await base(TABLE_NAME).find(req.body.id) as any;
         const currDate = getCurrDate();
-        const daysUntil = getDaysUntil(record.fields["Days until next test"] || 0, req.body.isCorrect);
+        const daysUntil = getDaysUntil(record.fields["Days until next test"] || 0, req.body.isCorrect, record.fields["Next test date"]);
 
         await base(TABLE_NAME).update(
             req.body.id,
