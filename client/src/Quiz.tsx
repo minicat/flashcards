@@ -52,15 +52,22 @@ export class Quiz extends React.Component<QuizProps, QuizState> {
     }
 
     onKeydown = (e: KeyboardEvent) => {
-        if (e.keyCode === 49 || e.keyCode === 74) {
-            // 1, J
-            this.toggleInfo();
-        } else if (e.keyCode === 50 || e.keyCode === 75) {
-            // 2, K
-            this.grade(true);
-        } else if (e.keyCode === 51 || e.keyCode === 76) {
-            // 3, L
-            this.grade(false);
+        if (this.isDone()) {
+            if (e.keyCode === 13 || e.keyCode === 66) {
+                // Enter, B
+                this.props.completeQuiz();
+            }
+        } else {
+            if (e.keyCode === 49 || e.keyCode === 74) {
+                // 1, J
+                this.toggleInfo();
+            } else if (e.keyCode === 50 || e.keyCode === 75) {
+                // 2, K
+                this.grade(true);
+            } else if (e.keyCode === 51 || e.keyCode === 76) {
+                // 3, L
+                this.grade(false);
+            }
         }
     };
 
@@ -81,6 +88,10 @@ export class Quiz extends React.Component<QuizProps, QuizState> {
             showInfo: false,
             results: this.state.results.concat(isCorrect),
         })
+    };
+
+    isDone = () => {
+        return this.state.index === this.quizItems.length;
     };
 
     renderOptions() {
@@ -121,7 +132,7 @@ export class Quiz extends React.Component<QuizProps, QuizState> {
     }
 
     render() {
-        if (this.state.index === this.quizItems.length) {
+        if (this.isDone()) {
             return this.renderDone()
         }
         const currItem = this.quizItems[this.state.index];
