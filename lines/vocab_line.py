@@ -5,7 +5,7 @@ import sys
 # pipenv install
 # pipenv run python vocab_line.py http://list.endpoint/
 
-FILTERED_RECORD_IDS = {'recdm5NrGhiPnvtTw'}
+FILTERED_RECORD_IDS = {'recdm5NrGhiPnvtTw', 'recvxjbdshhsePNp3'}
 
 vocab_list = requests.get(sys.argv[1]).json()
 
