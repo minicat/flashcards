@@ -17,4 +17,4 @@ for record in vocab_list:
         formatted_vocab = u'{} / {} / {} '.format(pinyin, chinese, english)
         # chinese chars are double width
         n_dashes = 60 - len(formatted_vocab) - len(chinese)
-        print u'{}{}'.format(formatted_vocab, '-'*n_dashes).encode('utf-8')
+        print('{}{}'.format(formatted_vocab, '-'*n_dashes))
