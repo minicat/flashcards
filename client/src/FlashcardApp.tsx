@@ -28,25 +28,29 @@ export class FlashcardApp extends React.Component<{}, FlashcardAppState> {
         rawRecordsList.forEach(rawRecord => {
             const fields: any = rawRecord.fields;
             const id = rawRecord.id;
+
+            // filter empty records (in case there's WIP editing) & "not for flashcards" records
+            if (!!fields["English"] && fields["Exclude from flashcards"] !== true) {
             // XXX: what's a nicer way to do this?
-            const record: RecordFields = {
-                id: id,
-                english: fields["English"],
-                pinyin: fields["Pinyin"],
-                chinese: fields["Chinese"],
-                notes: fields["Notes"],
-                category: fields["Category"],
-                sources: fields["Source(s)"],
-                added: new Date(fields["Added"]),
-                correct: fields["Correct"],
-                attempts: fields["Attempts"],
-                lastTested: fields["Last Tested"] ? new Date(fields["Last Tested"]) : undefined,
-                daysUntilNextTest: fields["Days until next test"],
-                // Only defined if Last Tested is defined, otherwise is #ERROR
-                nextTestDate: fields["Last Tested"] ? new Date(fields["Next test date"]) : undefined,
-                lastIncorrect: fields["Last Incorrect"] ? new Date(fields["Last Incorrect"]) : undefined,
-            };
-            records[id] = record;
+                const record: RecordFields = {
+                    id: id,
+                    english: fields["English"],
+                    pinyin: fields["Pinyin"],
+                    chinese: fields["Chinese"],
+                    notes: fields["Notes"],
+                    category: fields["Category"],
+                    sources: fields["Source(s)"],
+                    added: new Date(fields["Added"]),
+                    correct: fields["Correct"],
+                    attempts: fields["Attempts"],
+                    lastTested: fields["Last Tested"] ? new Date(fields["Last Tested"]) : undefined,
+                    daysUntilNextTest: fields["Days until next test"],
+                    // Only defined if Last Tested is defined, otherwise is #ERROR
+                    nextTestDate: fields["Last Tested"] ? new Date(fields["Next test date"]) : undefined,
+                    lastIncorrect: fields["Last Incorrect"] ? new Date(fields["Last Incorrect"]) : undefined,
+                };
+                records[id] = record;
+            }
         });
 
         this.setState({records: records});
