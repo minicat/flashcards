@@ -36,6 +36,11 @@
     background-color: #f9f9f9;
 }
 
+.startOptions label{
+    color: #6b6b6b;
+    margin-left: 6px;
+}
+
 @media only screen and (max-device-width: 600px) {
     .startOptions {
         min-width: 280px;

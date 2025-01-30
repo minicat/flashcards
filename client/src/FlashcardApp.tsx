@@ -8,6 +8,7 @@ import loading_gif from './loading.gif';
 interface FlashcardAppState {
     records?: RecordMap,
     currentQuizSet?: string[],
+    shouldIncludeAesopOnlyVocab: 'on' | undefined,
 }
 
 export class FlashcardApp extends React.Component<{}, FlashcardAppState> {
@@ -15,7 +16,9 @@ export class FlashcardApp extends React.Component<{}, FlashcardAppState> {
         super(props);
         this.fetchRecords();
 
-        this.state = {};
+        this.state = {
+            shouldIncludeAesopOnlyVocab: undefined,
+        };
     }
 
     fetchRecords = async () => {
@@ -83,21 +86,58 @@ export class FlashcardApp extends React.Component<{}, FlashcardAppState> {
     };
 
     startQuiz = (type: QuizType) => {
-        this.setState({currentQuizSet: generateQuizSet(type, this.state.records!)});
+        const allRecords = this.state.records!;
+        let recordsToUse: RecordMap;
+        
+        if (this.state.shouldIncludeAesopOnlyVocab === 'on') {
+            recordsToUse = allRecords;
+        } else {
+            // Filter them out based on sources
+            recordsToUse = {}; 
+
+            for (let recordId of Object.keys(allRecords)) {
+                const record = allRecords[recordId];
+                console.log(recordId, record)
+                // Slightly hacky; fable-introduced vocab start with Aesop's Fables, whereas older vocab that were
+                // tagged later have it at the end.
+                // Be resilient to missing sources
+                if (!record.sources || record.sources[0] !== "Aesop's Fables") {
+                    recordsToUse[recordId] = record;
+                }
+            }
+        }
+
+        this.setState({currentQuizSet: generateQuizSet(type, recordsToUse)});
     };
 
     renderQuizStartOptions = () => {
         // TODO: test categories?
         return (<div className="startOptions">
-            <h3>What would you like to test?</h3>
-            <div onClick={() => this.startQuiz(QuizType.ALL)}>All words</div>
-            <div onClick={() => this.startQuiz(QuizType.QUICK)}>Quick revision</div>
-            <div onClick={() => this.startQuiz(QuizType.WORST)}>Worst words</div>
-            <div onClick={() => this.startQuiz(QuizType.LEAST_RECENT)}>Least recently tested words</div>
-            <div onClick={() => this.startQuiz(QuizType.NEWEST)}>Newest words</div>
-            <div onClick={() => this.startQuiz(QuizType.LEAST_TESTED)}>Least tested words</div>
-            <div onClick={() => this.startQuiz(QuizType.UNLEARNED)}>Unlearned words</div>
-            <div onClick={() => this.startQuiz(QuizType.REVISION)}>Due for revision</div>
+                <h3>What would you like to test?</h3>
+                <div onClick={() => this.startQuiz(QuizType.ALL)}>All words</div>
+                <div onClick={() => this.startQuiz(QuizType.QUICK)}>Quick revision</div>
+                <div onClick={() => this.startQuiz(QuizType.WORST)}>Worst words</div>
+                <div onClick={() => this.startQuiz(QuizType.LEAST_RECENT)}>Least recently tested words</div>
+                <div onClick={() => this.startQuiz(QuizType.NEWEST)}>Newest words</div>
+                <div onClick={() => this.startQuiz(QuizType.LEAST_TESTED)}>Least tested words</div>
+                <div onClick={() => this.startQuiz(QuizType.UNLEARNED)}>Unlearned words</div>
+                <div onClick={() => this.startQuiz(QuizType.REVISION)}>Due for revision</div>
+                <p>
+                    <input 
+                        type="checkbox" 
+                        id="aesopVocabCheckbox" 
+                        name="aesopVocabCheckbox" 
+                        value={this.state.shouldIncludeAesopOnlyVocab}
+                        onClick={(e) => {
+                            if (this.state.shouldIncludeAesopOnlyVocab) {
+                            this.setState({shouldIncludeAesopOnlyVocab: undefined});
+                            } else {
+                            this.setState({shouldIncludeAesopOnlyVocab: 'on'});
+                            }
+                        }}
+                    />
+                    <label htmlFor="aesopVocabCheckbox">Include vocab learnt from Aesop's Fables</label>
+                </p>
             </div>
         )
     };
