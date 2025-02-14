@@ -137,8 +137,9 @@ export class Quiz extends React.Component<QuizProps, QuizState> {
         }
         const currItem = this.quizItems[this.state.index];
         const currRecord = this.props.records[currItem.id];
-        const mainLine = currItem.testingEnglish ? currRecord.english : currRecord.pinyin;
-        const secondLine = currItem.testingEnglish ? currRecord.pinyin : currRecord.english;
+        const chineseAndPinyin = `${currRecord.chinese} / ${currRecord.pinyin}`;
+        const mainLine = currItem.testingEnglish ? currRecord.english : chineseAndPinyin;
+        const secondLine = currItem.testingEnglish ? chineseAndPinyin : currRecord.english;
         return (
             <div className="quiz">
                 <div className="progress">
@@ -150,7 +151,7 @@ export class Quiz extends React.Component<QuizProps, QuizState> {
                 {this.renderOptions()}
                 {this.state.showInfo && (
                     <div className="info">
-                        {secondLine} / {currRecord.chinese}<br />
+                        {secondLine}<br />
                         {currRecord.notes}
                     </div>
                 )}
